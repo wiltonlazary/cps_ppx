@@ -1,0 +1,57 @@
+ [@implicit_arity]
+ 
+ let rec consumeExprFun = (expr,params) =>
+    switch (expr) {
+    | {pexp_desc: Pexp_fun(label, _,  pat, pexp)} =>
+      consumeExprFun(exp2,params @ pat)
+    | other => default_mapper.expr(mapper, other)
+    };
+
+    consumeExprFun(expr,[]);
+    
+     /* switch (payload) {
+     | PStr(str) => Pprintast.structure(Format.str_formatter, str)
+     | PTyp(typ) => Pprintast.core_type(Format.str_formatter, typ)
+     | PPat(arg1, Some(arg2)) =>
+       Pprintast.expression(Format.str_formatter, arg2)
+     | PPat(arg1, None) => Pprintast.pattern(Format.str_formatter, arg1)
+     };
+     println(Format.flush_str_formatter());
+     Pprintast.expression(Format.str_formatter, expr);
+     println(Format.flush_str_formatter()); */
+
+  /* | {pexp_desc: Pexp_fun(label, exp1, ptrn, exp2)} =>
+     println("ppx cps");
+     %expr
+     22; */
+
+
+/* attributes: (mapper, attributes) =>
+     switch (attributes) {
+     | [({txt: "cps"}, contents)] =>
+       println("ppx attr cps 2");
+       attributes;
+     | _ => attributes
+     }, */
+
+      /* let resExprPStr = PStr([Str.mk(Pstr_eval(funExpr, []))]); */
+
+
+    /* let rec joinExps = (expr, expressions) =>
+         switch (expressions) {
+         | [] => expr
+         | [head, ...tail] => joinExps([%expr ([%e expr])([%e head |> snd])], tail)
+         };
+
+       let head = List.nth(expressions, 0);
+       let partialNode = this#parseNode(mapper, joinExps([%expr [%e head |> snd]], List.tl(expressions)));
+       let ident = Exp.ident({txt: Lident(id), loc}); */
+
+
+        let applyExpr = [@metaloc loc] [%expr [%e expr](continuation)];
+    let resExpr = this#parseNode(mapper, Exp.attr(applyExpr, ({txt: "cpsapply", loc}, emptyPstr)));
+
+      /* 
+       Pprintast.expression(Format.str_formatter, resExpr);
+       println(Format.flush_str_formatter()); 
+       */

@@ -1,0 +1,22 @@
+{
+    "name": "cps_ppx",
+    "version": "0.0.1",
+    "description": "cps PPX rewriter for Bucklescript/ReasonML",
+    "main": "index.js",
+    "repository": "https://github.com/mhallin/cps_ppx",
+    "author": "Magnus Hallin <mhallin@fastmail.com>",
+    "license": "BSD-3-Clause",
+    "bin": {
+        "send-introspection-query": "./sendIntrospectionQuery.js"
+    },
+    "scripts": {
+        "postinstall": "node copyPlatformBinaryInPlace.js"
+    },
+    "devDependencies": {
+        "bs-platform": "^3.1.5"
+    },
+    "dependencies": {
+        "request": "^2.82.0",
+        "yargs": "^11.0.0"
+    }
+}

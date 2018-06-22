@@ -1,0 +1,122 @@
+(cd tests && bsb -clean-world && bsb -make-world && ./lib/bs/native/indexnative.native)
+ninja: Entering directory `/mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/lib/bs/native'
+[1/4] [34mBuilding[39m [2msrc/native/IndexNativeCpsed.mlast[22m
+[2/4] [34mBuilding[39m [2msrc/native/IndexNativeCpsed.mlast.d[22m
+[3/4] [34mBuilding[39m [2msrc/native/IndexNative.mlast[22m
+[4/4] [34mBuilding[39m [2msrc/native/IndexNative.mlast.d[22m
+[1/3] [34mBuilding[39m [2msrc/native/IndexNativeCpsed.cmx[22m
+[2/3] [34mBuilding[39m [2msrc/native/IndexNative.cmx[22m
+
+  Warning number 21
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 14:9-29
+  
+  12 ┆ {
+  13 ┆   ();
+  14 ┆   raise(LocalException);
+  15 ┆   println("defer branch 1");
+  16 ┆   continuation#resume("001");
+  
+  this statement never returns (or has an unsound type.)
+
+  Warning number 10
+  (No file name)
+  
+  this expression should have type unit.
+
+  Warning number 10
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 45:11-19
+  
+  43 ┆   println("catch branch 1");
+  44 ┆   firstCps(", 55");
+  45 ┆   "catch 1";
+  46 ┆   raise(LocalException);
+  47 ┆ | error => raise(error)
+  
+  this expression should have type unit.
+
+  Warning number 10
+  (No file name)
+  
+  this expression should have type unit.
+
+  Warning number 27
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 2:15-19
+  
+  1 │ let println = print_endline;
+  2 │ let debugln = value => ();
+  3 │ 
+  4 │ exception Exception;
+  
+  unused variable value.
+
+  Warning number 27
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 10:5
+  
+   8 ┆ [@cps]
+   9 ┆ (
+  10 ┆   x =>
+  11 ┆     [@defer]
+  12 ┆     {
+  
+  unused variable x.
+
+  Warning number 27
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 24:5
+  
+  22 ┆ [@cps]
+  23 ┆ (
+  24 ┆   x =>
+  25 ┆     [@defer]
+  26 ┆     {
+  
+  unused variable x.
+
+  Warning number 27
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 37:5
+  
+  35 ┆ [@cps]
+  36 ┆ (
+  37 ┆   x => {
+  38 ┆     try (
+  39 ┆       try (
+  
+  unused variable x.
+
+  Warning number 27
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 66:23-25
+  
+  64 ┆ {
+  65 ┆   pub self = this;
+  66 ┆   pub willDefer = loc => {
+  67 ┆     ();
+  68 ┆     /* println("continuation willDefer: " ++ loc); */
+  
+  unused variable loc.
+
+  Warning number 27
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 71:24-26
+  
+  69 ┆   ();
+  70 ┆ };
+  71 ┆ pub willResume = loc => {
+  72 ┆   ();
+  73 ┆   /* println("continuation willResume: " ++ loc); */
+  
+  unused variable loc.
+
+  Warning number 27
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 76:23-25
+  
+  74 ┆   ();
+  75 ┆ };
+  76 ┆ pub willError = loc => {
+  77 ┆   ();
+  78 ┆   /* println("continuation willError: " ++ loc); */
+  
+  unused variable loc.
+[3/3] [34mBuilding[39m [2mindexnative.native[22m
+catch branch 1
+defer branch 1
+catch branch 2
+continuation result is: catch 2
+::cps finished::

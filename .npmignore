@@ -1,0 +1,6 @@
+/.vscode
+/_build
+/node_modules
+/lib
+/tests/lib
+/cps_ppx.exe

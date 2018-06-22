@@ -1,0 +1,5 @@
+(jbuild_version 1)
+
+(alias
+ ((name cps_ppx)
+  (deps (src/cps_ppx.exe))))

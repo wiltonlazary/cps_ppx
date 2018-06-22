@@ -1,0 +1,25 @@
+{
+    "name": "cps_ppx_test",
+    "ppx-flags": [
+        "../cps_ppx.exe"
+    ],
+    "sources": [{
+        "dir": "src",
+        "subdirs": [{
+            "dir": "native",
+            "backend": "native"
+        }, {
+            "dir": "js",
+            "backend": "js"
+        }, {
+            "dir": "bytecode",
+            "backend": "bytecode"
+        }]
+    }],
+    "entries": [{
+        "backend": "native",
+        "main-module": "IndexNative"
+    }],
+    "refmt": 3,
+    "bsc-flags": ["-bs-super-errors"]
+}

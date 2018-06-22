@@ -1,0 +1,4 @@
+{
+    "name": "cps_ppx",
+    "bsc-flags": ["-bs-super-errors"]
+}
