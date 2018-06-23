@@ -543,9 +543,9 @@ let parsers = {
         pub resumed = () => _cps_resumed_^;
         pub resume = _cps_branch_resume_;
         pub error = _cps_branch_error_;
-        pub willDefer = _cps_continuation_#willDefer;
-        pub willResume = _cps_continuation_#willResume;
-        pub willError = _cps_continuation_#willError
+        pub onDefer = _cps_continuation_#onDefer;
+        pub onResume = _cps_continuation_#onResume;
+        pub onError = _cps_continuation_#onError
       };
       %e
       applyExpr;
@@ -564,7 +564,7 @@ let parsers = {
         if (_cps_resumed_^) {
           raise(Failure("defer cps error already resumed: " ++ __LOC__));
         } else {
-          _cps_continuation_#willError(__LOC__);
+          _cps_continuation_#onError(__LOC__);
           _cps_resumed_ := true;
           debugln("defer cps error resumed: " ++ __LOC__);
           _cps_branch_error_(_cps_error_);
@@ -574,7 +574,7 @@ let parsers = {
         if (_cps_resumed_^) {
           raise(Failure("defer cps already resumed: " ++ __LOC__));
         } else {
-          _cps_continuation_#willResume(__LOC__);
+          _cps_continuation_#onResume(__LOC__);
           _cps_resumed_ := true;
           debugln("defer cps resumed: " ++ __LOC__);
           if%e (terminator) {
@@ -593,7 +593,7 @@ let parsers = {
         pub resume = _cps_branch_resume_;
         pub error = _cps_branch_error_
       };
-      _cps_continuation_#willDefer(__LOC__);
+      _cps_continuation_#onDefer(__LOC__);
       %e
       deferExpr;
       _cps_resumed_^ ? `Continued : `Suspended;

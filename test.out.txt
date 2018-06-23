@@ -120,35 +120,35 @@ ninja: Entering directory `/mnt/internal/home/fox/development/laztic/laz-framewo
   unused variable x.
 
   Warning number 27
-  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 91:23-25
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 91:21-23
   
   89 ┆ {
   90 ┆   pub self = this;
-  91 ┆   pub willDefer = loc => {
+  91 ┆   pub onDefer = loc => {
   92 ┆     ();
-  93 ┆     /* println("continuation willDefer: " ++ loc); */
+  93 ┆     /* println("continuation onDefer: " ++ loc); */
   
   unused variable loc.
 
   Warning number 27
-  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 96:24-26
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 96:22-24
   
   94 ┆   ();
   95 ┆ };
-  96 ┆ pub willResume = loc => {
+  96 ┆ pub onResume = loc => {
   97 ┆   ();
-  98 ┆   /* println("continuation willResume: " ++ loc); */
+  98 ┆   /* println("continuation onResume: " ++ loc); */
   
   unused variable loc.
 
   Warning number 27
-  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 101:23-25
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 101:21-23
   
    99 ┆   ();
   100 ┆ };
-  101 ┆ pub willError = loc => {
+  101 ┆ pub onError = loc => {
   102 ┆   ();
-  103 ┆   /* println("continuation willError: " ++ loc); */
+  103 ┆   /* println("continuation onError: " ++ loc); */
   
   unused variable loc.
 [3/3] [34mBuilding[39m [2mindexnative.native[22m

@@ -88,19 +88,19 @@ let res =
     otherCps,
     {
       pub self = this;
-      pub willDefer = loc => {
+      pub onDefer = loc => {
         ();
-        /* println("continuation willDefer: " ++ loc); */
-        ();
-      };
-      pub willResume = loc => {
-        ();
-        /* println("continuation willResume: " ++ loc); */
+        /* println("continuation onDefer: " ++ loc); */
         ();
       };
-      pub willError = loc => {
+      pub onResume = loc => {
         ();
-        /* println("continuation willError: " ++ loc); */
+        /* println("continuation onResume: " ++ loc); */
+        ();
+      };
+      pub onError = loc => {
+        ();
+        /* println("continuation onError: " ++ loc); */
         ();
       };
       pub resume = value => {
