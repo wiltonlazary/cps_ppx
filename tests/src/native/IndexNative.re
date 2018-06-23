@@ -26,7 +26,7 @@ let firstCps =
       {
         ();
         println("defer branch 1");
-        continuation#resume("001");
+        continuation#resume(x);
         /* continuation#error(Exception); */
       }
   );
@@ -35,6 +35,11 @@ let otherCps =
   [@cps]
   (
     x => {
+      switch (firstCps("xx1xx2")) {
+      | "xx1xx2" as pattern => println("switch: pattern 1 matched: " ++ pattern)
+      | other => println("switch: no pattern matched: " ++ other)
+      };
+
       try (
         try (firstErrorCps(", 1")) {
         | LocalException =>
