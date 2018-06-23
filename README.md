@@ -7,7 +7,7 @@ if more people get on board, it can move further.
 ```
 What works fully async by now:
 ------>    nested [@cps] function declaration
------->    function call
+------>    function apply "named by: wait or with sufix Cps/Await"
 ------>    single let bindings
 ------>    if/then/else
 ------>    match/cases
