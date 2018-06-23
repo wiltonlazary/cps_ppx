@@ -81,7 +81,7 @@ let otherCps =
               boolCps(false);
             }) {
           println("then branch: 1");
-          "then";
+          "then"; 
         } else {
           println("else branch: 1");
           "else";

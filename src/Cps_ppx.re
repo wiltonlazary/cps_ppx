@@ -43,7 +43,8 @@ let leafExpr = (expr, tag) => Exp.attr(expr, ({txt: "cpsleaf", loc: default_loc^
 
 let continuationExpr = expr => Exp.attr(expr, ({txt: "cpscontinuation", loc: default_loc^}, emptyPstr));
 
-let matchesCpsApply = id => id == "await" || id |> endsWith("Cps") || id |> endsWith("Await");
+let matchesCpsApply = id =>
+  id == "await" || id == "delay" || id |> endsWith("Cps") || id |> endsWith("Await") || id |> endsWith("Delay");
 
 let mkLetExpr = (recFlag, varName, varNameLoc, expr, constraintType, inExpr) =>
   Exp.mk(
@@ -197,7 +198,7 @@ let parsers = {
             };
           } else {
             continuationExpr(resumeExprs);
-          }; 
+          };
           ();
         };
       let _cps_resumed_ = ref(false);
@@ -292,7 +293,7 @@ let parsers = {
             };
           } else {
             continuationExpr(resumeExprs);
-          };  
+          };
           ();
         };
       let _cps_resumed_ = ref(false);
@@ -837,16 +838,4 @@ let parsers = {
 
 let cpsMapper = argv => {...default_mapper, expr: (mapper, expr) => default_mapper.expr(mapper, parsers#parseNode(expr))};
 
-let () = register("cps_ppx", cpsMapper);
-let () = register("cps_ppx", cpsMapper);
-let () = register("cps_ppx", cpsMapper);
-let () = register("cps_ppx", cpsMapper);
-let () = register("cps_ppx", cpsMapper);
-let () = register("cps_ppx", cpsMapper);
-let () = register("cps_ppx", cpsMapper);
-let () = register("cps_ppx", cpsMapper);
-let () = register("cps_ppx", cpsMapper);
-let () = register("cps_ppx", cpsMapper);
-let () = register("cps_ppx", cpsMapper);
-let () = register("cps_ppx", cpsMapper);
 let () = register("cps_ppx", cpsMapper);

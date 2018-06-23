@@ -204,7 +204,7 @@ else branch: 1
 ifres: else
 defer branch 1
 defer branch 10
-switch 2 --- : no pattern matched: 
+switch 2 --- : pattern 1 matched: 
 catch branch 1
 defer branch 1
 catch branch 2
