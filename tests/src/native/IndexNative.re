@@ -36,9 +36,7 @@ let otherCps =
   (
     x => {
       try (
-        try (
-          firstErrorCps(", 1")
-        ) {
+        try (firstErrorCps(", 1")) {
         | LocalException =>
           println("catch branch 1");
           firstCps(", 55");
@@ -52,12 +50,10 @@ let otherCps =
         "cc1";
       | error => raise(error)
       };
-      
+
       let res =
         try (
-          try (
-            firstErrorCps(", 1")
-          ) {
+          try (firstErrorCps(", 1")) {
           | LocalException =>
             println("catch branch 1");
             firstCps(", 55");
@@ -84,10 +80,10 @@ let otherCps =
     }
   );
 
-let myFuncCps = [@cps] ((it1, itNameCps) => itNameCps(it1));
+let async = [@cps] ((it1, itNameCps) => itNameCps(it1));
 
 let res =
-  myFuncCps(
+  async(
     "0",
     otherCps,
     {
