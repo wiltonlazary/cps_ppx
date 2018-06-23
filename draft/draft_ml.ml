@@ -1,1 +1,1 @@
-let _ = match 1 with | 1 -> 0 | 2 -> 0
+let _ = for i = 1 to 10 do while true do println xxx done done
