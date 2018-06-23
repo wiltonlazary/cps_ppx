@@ -5,8 +5,14 @@ Hi guys, for me asynchronous computations are a matter of urgency, then I made a
 if more people get on board, it can move further.
 
 What works fully async by now:
-  function call,
-  single let bindings,
-  if/then/else,
-  match/cases.
-  try/cases.
+------>    nested [@cps] function declaration
+------>    function call
+------>    single let bindings
+------>    if/then/else
+------>    match/cases
+------>    try/cases
+
+What will come fully async on short:
+------> for/while loops
+------> instance methods on cps apply detection
+------> ...
