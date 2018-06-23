@@ -706,13 +706,14 @@ let parsers = {
     [@metaloc loc]
     {
       let%expr _cps_resumed_ = ref(false);
+      let _cps_error_resumed_ = ref(false);
       let _dbg_cps_from = [%e stringToExpr(from)];
       let _cps_branch_error_ = _cps_error_ =>
-        if (_cps_resumed_^) {
+        if (_cps_error_resumed_^) {
           raise(Failure("defer cps error already resumed: " ++ __LOC__));
         } else {
           _cps_continuation_#onError(__LOC__);
-          _cps_resumed_ := true;
+          _cps_error_resumed_ := true;
           /*          debugln("defer cps error resumed: " ++ __LOC__);*/
           _cps_branch_error_(_cps_error_);
           ();
@@ -724,13 +725,17 @@ let parsers = {
           _cps_continuation_#onResume(__LOC__);
           _cps_resumed_ := true;
           /*          debugln("defer cps resumed: " ++ __LOC__);*/
-          if%e (terminator) {
-            leafExpr(resumeExprs, "t");
-          } else if (resumeExprsBranched == 0) {
-            let%expr _cps_result_ = [%e leafExpr(resumeExprs, "r")];
-            _cps_branch_resume_(_cps_result_);
-          } else {
-            continuationExpr(resumeExprs);
+          try (
+            if%e (terminator) {
+              leafExpr(resumeExprs, "t");
+            } else if (resumeExprsBranched == 0) {
+              let%expr _cps_result_ = [%e leafExpr(resumeExprs, "r")];
+              _cps_branch_resume_(_cps_result_);
+            } else {
+              continuationExpr(resumeExprs);
+            }
+          ) {
+          | error => _cps_branch_error_(error)
           };
           ();
         };

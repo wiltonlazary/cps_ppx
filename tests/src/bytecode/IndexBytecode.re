@@ -11,9 +11,10 @@ let firstErrorCps =
       [@defer]
       {
         ();
+        raise(LocalException);
         println("defer branch 1");
-        continuation#error(LocalException);
-        /* raise(LocalException); */
+        continuation#resume("001");
+        /* continuation#error(Exception); */
       }
   );
 
@@ -24,8 +25,8 @@ let firstCps =
       [@defer]
       {
         ();
-        println("defer branch 2");
-        continuation#resume(x ++ "-004");
+        println("defer branch 1");
+        continuation#resume(x);
         /* continuation#error(Exception); */
       }
   );
@@ -38,7 +39,7 @@ let boolCps =
       {
         ();
         println("defer branch 10");
-        continuation#resume(x)
+        continuation#resume(x);
       }
   );
 
@@ -49,7 +50,7 @@ let otherCps =
       try (
         try (firstErrorCps(", 1")) {
         | LocalException =>
-          println("a catch branch 1");
+          println("catch branch 1");
 
           let v =
             switch (firstCps("xx1xx2")) {
@@ -69,7 +70,7 @@ let otherCps =
         }
       ) {
       | LocalException =>
-        println("b catch branch 2");
+        println("catch branch 2");
         "cc1";
       | error => raise(error)
       };
@@ -80,7 +81,7 @@ let otherCps =
               boolCps(false);
             }) {
           println("then branch: 1");
-          "then";
+          "then"; 
         } else {
           println("else branch: 1");
           "else";

@@ -12,7 +12,7 @@ let firstErrorCps =
       {
         ();
         println("defer branch 1");
-        continuation#error(LocalException);
+        Js.Global.setTimeout(() => continuation#error(LocalException), 1000);
         /* raise(LocalException); */
       }
   );
@@ -25,7 +25,8 @@ let firstCps =
       {
         ();
         println("defer branch 2");
-        continuation#resume(x ++ "-004");
+        /* continuation#resume(x ++ "-004"); */
+        Js.Global.setTimeout(() => continuation#resume(x ++ "-004"), 1000);
         /* continuation#error(Exception); */
       }
   );
@@ -38,7 +39,8 @@ let boolCps =
       {
         ();
         println("defer branch 10");
-        continuation#resume(x)
+        continuation#resume(x);
+        /* Js.Global.setTimeout(() => continuation#resume(x), 1000); */
       }
   );
 

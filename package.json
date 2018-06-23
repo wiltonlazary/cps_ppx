@@ -3,8 +3,8 @@
     "version": "0.0.1",
     "description": "cps PPX rewriter for Bucklescript/ReasonML",
     "main": "index.js",
-    "repository": "https://github.com/mhallin/cps_ppx",
-    "author": "Magnus Hallin <mhallin@fastmail.com>",
+    "repository": "https://github.com/wiltonlazary/cps_ppx",
+    "author": "Wilton Lazary <wiltonlazary@gmail.com>",
     "license": "BSD-3-Clause",
     "bin": {
         "send-introspection-query": "./sendIntrospectionQuery.js"

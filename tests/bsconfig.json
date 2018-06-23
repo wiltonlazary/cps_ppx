@@ -19,6 +19,12 @@
     "entries": [{
         "backend": "native",
         "main-module": "IndexNative"
+    }, {
+        "backend": "bytecode",
+        "main-module": "IndexBytecode"
+    }, {
+        "backend": "js",
+        "main-module": "IndexJs"
     }],
     "refmt": 3,
     "bsc-flags": ["-bs-super-errors"]
