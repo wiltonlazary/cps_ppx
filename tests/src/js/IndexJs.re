@@ -64,8 +64,9 @@ let otherCps =
         try (firstErrorCps(", 1")) {
         | LocalException =>
           println("a catch branch 1");
-          raise(LocalException);
-          firstCps(", 55");
+          let _ = firstCps(", 55");
+          raise(LocalException); 
+          "xx";
         | error => raise(error)
         }
       ) {

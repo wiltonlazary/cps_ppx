@@ -706,9 +706,7 @@ let parsers = {
     [@metaloc loc]
     {
       let%expr _cps_resumed_ = ref(false);
-      let _cps_error_resumed_ = ref(false);
       let _dbg_cps_from = [%e stringToExpr(from)];
-
       let _cps_branch_resume_ = _cps_result_ =>
         if (_cps_resumed_^) {
           raise(Failure("defer cps already resumed: " ++ __LOC__));
@@ -724,16 +722,6 @@ let parsers = {
           } else {
             continuationExpr(resumeExprs);
           };
-          ();
-        };
-      let _cps_branch_error_ = _cps_error_ =>
-        if (_cps_error_resumed_^) {
-          raise(Failure("defer cps error already resumed: " ++ __LOC__));
-        } else {
-          _cps_continuation_#onError(__LOC__);
-          _cps_error_resumed_ := true;
-          /*          debugln("defer cps error resumed: " ++ __LOC__);*/
-          _cps_branch_error_(_cps_error_);
           ();
         };
       let continuation = {
