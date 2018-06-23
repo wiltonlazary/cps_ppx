@@ -104,6 +104,130 @@ let mkLetIdentExpr = (recFlag, varName, varNameLoc, identName, constraintType, i
 let mkTryExpr = (tryExpr, casesExprs) => Exp.try_(tryExpr, casesExprs);
 
 let parsers = {
+  pri processMatchBranch = (~from="_", branched, matchExpr, casesExprs, nextExpr) => {
+    let resumeExprsBranched = ref(0);
+    let (resumeExprs, hasResumeExprs) =
+      switch (nextExpr) {
+      | Some(nextExpr) => (this#descendantParser(~from=__LOC__, nextExpr, resumeExprsBranched), true)
+      | None => (unitExpr, false)
+      };
+
+    let matchExprBranched = ref(0);
+    let matchExpr = this#descendantParser(~from=__LOC__, matchExpr, matchExprBranched);
+
+    let lasCasePattern = ref(None);
+    let caseExprsBranched = ref(0);
+
+    let casesExprsComputed =
+      casesExprs
+      |> List.map(it =>
+           switch (it) {
+           | {pc_lhs: pattern, pc_guard: guard, pc_rhs: expr} =>
+             lasCasePattern := Some(pattern);
+             let caseExprBranchedLocal = ref(0);
+             let caseExpr = this#descendantParser(~from=__LOC__, expr, caseExprBranchedLocal);
+             caseExprsBranched := caseExprsBranched^ + caseExprBranchedLocal^;
+             (Exp.case(pattern, ~guard?, caseExpr), caseExprBranchedLocal^ > 0);
+           }
+         );
+
+    branched := branched^ + resumeExprsBranched^ + matchExprBranched^ + caseExprsBranched^;
+
+    if (branched^ > 0) {
+      let matchLoc =
+        switch (lasCasePattern^) {
+        | None => default_loc^
+        | Some(pattern) =>
+          switch (pattern) {
+          | {ppat_loc: loc} => loc
+          }
+        };
+
+      let casesExprs =
+        casesExprsComputed
+        |> List.map(it =>
+             switch (it |> fst) {
+             | {pc_lhs: pattern, pc_guard: guard, pc_rhs: expr} =>
+               if (it |> snd) {
+                 Exp.case(
+                   pattern,
+                   ~guard?,
+                   try%expr ([%e expr]) {
+                   | error =>
+                     _cps_branch_error_(error);
+                     _cps_resumed_^ ? `Continued : `Suspended;
+                   },
+                 );
+               } else {
+                 Exp.case(
+                   pattern,
+                   ~guard?,
+                   try%expr (
+                     {
+                       let _cps_result_ = [%e expr];
+                       _cps_branch_resume_(_cps_result_);
+                       _cps_resumed_^ ? `Continued : `Suspended;
+                     }
+                   ) {
+                   | error =>
+                     _cps_branch_error_(error);
+                     _cps_resumed_^ ? `Continued : `Suspended;
+                   },
+                 );
+               }
+             }
+           );
+
+      let tryExpr =
+        matchExprBranched^ > 0 ?
+          matchExpr :
+          {
+            let%expr _cps_result_ = [%e matchExpr];
+            _cps_branch_resume_(_cps_result_);
+          };
+
+      let%expr _cps_resumed_ = ref(false);
+      let _dbg_cps_from = [%e stringToExpr(from)];
+      let _cps_branch_resume_ = _cps_result_ =>
+        if (_cps_resumed_^) {
+          raise(Failure("try cps already resumed: " ++ __LOC__));
+        } else {
+          _cps_resumed_ := true;
+          debugln("try cps resumed: " ++ __LOC__);
+          if%e (resumeExprsBranched^ == 0) {
+            let%expr _cps_resumed_ = [%e leafExpr(resumeExprs, "r")];
+            _cps_branch_resume_(_cps_result_);
+          } else {
+            continuationExpr(resumeExprs);
+          };
+          ();
+        };
+      let _cps_branch_error_ = _cps_error_ =>
+        if (_cps_resumed_^) {
+          raise(Failure("try cps error already resumed: " ++ __LOC__));
+        } else {
+          debugln("try cps error resumed: " ++ __LOC__);
+          %e
+          Exp.match(~loc=matchLoc, [%expr _cps_error_], casesExprs);
+          ();
+        };
+      try ([%e tryExpr]) {
+      | error =>
+        _cps_branch_error_(error);
+        _cps_resumed_^ ? `Continued : `Suspended;
+      };
+    } else {
+      %expr
+      if%e (hasResumeExprs) {
+        let%expr _cps_result_ = [%e mkTryExpr(matchExpr, casesExprs)];
+        %e
+        resumeExprs;
+      } else {
+        let%expr _cps_result_ = [%e mkTryExpr(matchExpr, casesExprs)];
+        _cps_result_;
+      };
+    };
+  };
   pri processTryBranch = (~from="_", branched, tryExpr, casesExprs, nextExpr) => {
     let resumeExprsBranched = ref(0);
     let (resumeExprs, hasResumeExprs) =
@@ -117,16 +241,6 @@ let parsers = {
 
     let lasCasePattern = ref(None);
     let caseExprsBranched = ref(0);
-
-    let caseEndExpr =
-      tryExprBranched^ == 0 ?
-        unitExpr :
-        (
-          switch%expr (_cps_resumed_^) {
-          | true => `Continued
-          | false => `Suspended
-          }
-        );
 
     let casesExprsComputed =
       casesExprs
@@ -355,6 +469,8 @@ let parsers = {
     | {pexp_desc: Pexp_ifthenelse(ifExpr, thenExpr, elseExpr)} =>
       this#processIfthenelseBranch(branched, ifExpr, thenExpr, elseExpr, Some(nextSequenceExpr))
     | {pexp_desc: Pexp_try(tryExpr, casesExprs)} => this#processTryBranch(branched, tryExpr, casesExprs, Some(nextSequenceExpr))
+    | {pexp_desc: Pexp_match(matchExpr, casesExprs)} =>
+      this#processMatchBranch(branched, matchExpr, casesExprs, Some(nextSequenceExpr))
     | other => Exp.mk(Pexp_sequence(other, this#descendantParser(~from=__LOC__, nextSequenceExpr, branched)))
     };
   pri processLetBranch = (branched, recFlag, bindings, inExpr, nextSequenceExpr) =>
@@ -413,6 +529,9 @@ let parsers = {
         | {pexp_desc: Pexp_try(tryExpr, casesExprs)} =>
           let nextExprs = mkLetIdentExpr(recFlag, varName, varNameLoc, "_cps_result_", constraintType, inExpr);
           this#processTryBranch(branched, tryExpr, casesExprs, Some(nextExprs));
+        | {pexp_desc: Pexp_match(matchExpr, casesExprs)} =>
+          let nextExprs = mkLetIdentExpr(recFlag, varName, varNameLoc, "_cps_result_", constraintType, inExpr);
+          this#processMatchBranch(branched, matchExpr, casesExprs, Some(nextExprs));
         | other =>
           let bindingExprBranched = ref(0);
           let bindingExpr = this#descendantParser(~from=__LOC__, bindingExpr, bindingExprBranched);
@@ -614,6 +733,7 @@ let parsers = {
     | {pexp_desc: Pexp_ifthenelse(ifExpr, thenExpr, elseExpr)} =>
       this#processIfthenelseBranch(branched, ifExpr, thenExpr, elseExpr, None)
     | {pexp_desc: Pexp_try(tryExpr, casesExprs)} => this#processTryBranch(branched, tryExpr, casesExprs, None)
+    | {pexp_desc: Pexp_match(matchExpr, casesExprs)} => this#processMatchBranch(branched, matchExpr, casesExprs, None)
     | other =>
       switch (other) {
       | {pexp_desc: Pexp_constant(constant)} => other

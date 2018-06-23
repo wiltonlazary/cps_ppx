@@ -1,1 +1,1 @@
-let _ = try 1 with | Not_found  -> 0;;
+let _ = match 1 with | 1 -> 0 | 2 -> 0
