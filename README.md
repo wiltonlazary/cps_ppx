@@ -4,6 +4,7 @@ Hi guys, for me asynchronous computations are a matter of urgency, then I made a
 
 if more people get on board, it can move further.
 
+```
 What works fully async by now:
 ------>    nested [@cps] function declaration
 ------>    function call
@@ -16,3 +17,4 @@ What will come fully async on short:
 ------> for/while loops
 ------> instance methods on cps apply detection
 ------> ...
+```
