@@ -14,7 +14,7 @@ What works fully async by now:
 ------>    try/cases
 
 What will come fully async on short:
-------> for/while loops
-------> instance methods on cps apply detection
-------> ...
+------>    for/while loops
+------>    instance methods on cps apply detection
+------>    ...
 ```
