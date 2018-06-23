@@ -31,6 +31,18 @@ let firstCps =
       }
   );
 
+let boolCps =
+  [@cps]
+  (
+    x =>
+      [@defer]
+      {
+        ();
+        println("defer branch 10");
+        continuation#resume(x);
+      }
+  );
+
 let otherCps =
   [@cps]
   (
@@ -62,6 +74,36 @@ let otherCps =
         "cc1";
       | error => raise(error)
       };
+
+      let ifres =
+        if ({
+              firstCps(", 55");
+              boolCps(false);
+            }) {
+          println("then branch: 1");
+          "then";
+        } else {
+          println("else branch: 1");
+          "else";
+        };
+
+      println("ifres: " ++ ifres);
+
+      let v =
+        switch (
+          {
+            let x = firstCps("zazaza");
+            let x = x == "zazaza";
+            boolCps(x);
+          }
+        ) {
+        | true as pattern =>
+          println("switch 2 --- : pattern 1 matched: ");
+          pattern;
+        | other =>
+          println("switch 2 --- : no pattern matched: ");
+          other;
+        };
 
       let res =
         try (
