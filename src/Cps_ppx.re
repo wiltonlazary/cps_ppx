@@ -103,8 +103,6 @@ let mkLetIdentExpr = (recFlag, varName, varNameLoc, identName, constraintType, i
 
 let mkTryExpr = (expr, caseExprs) => Exp.try_(expr, caseExprs);
 
-let mkMatchExpr = (expr, caseExprs) => Exp.match(expr, caseExprs);
-
 let parsers = {
   pri processMatchBranch = (~from="_", branched, matchExpr, caseExprs, nextExpr) => {
     let resumeExprsBranched = ref(0);
@@ -135,16 +133,16 @@ let parsers = {
 
     branched := branched^ + resumeExprsBranched^ + matchExprBranched^ + caseExprsBranched^;
 
-    if (branched^ > 0) {
-      let matchLoc =
-        switch (lasCasePattern^) {
-        | None => default_loc^
-        | Some(pattern) =>
-          switch (pattern) {
-          | {ppat_loc: loc} => loc
-          }
-        };
+    let matchLoc =
+      switch (lasCasePattern^) {
+      | None => default_loc^
+      | Some(pattern) =>
+        switch (pattern) {
+        | {ppat_loc: loc} => loc
+        }
+      };
 
+    if (branched^ > 0) {
       let caseExprs =
         caseExprsComputed
         |> List.map(it =>
@@ -187,7 +185,7 @@ let parsers = {
           raise(Failure("match cps already resumed: " ++ __LOC__));
         } else {
           _cps_resumed_ := true;
-          debugln("match cps resumed: " ++ __LOC__);
+          /*          debugln("match cps resumed: " ++ __LOC__);*/
           if%e (resumeExprsBranched^ == 0) {
             let%expr _cps_resumed_ = [%e leafExpr(resumeExprs, "r")];
             _cps_branch_resume_(_cps_result_);
@@ -196,19 +194,17 @@ let parsers = {
           };
           ();
         };
-
       let _cps_resumed_ = ref(false);
       let _cps_branch_resume_ = _cps_result_ =>
         if (_cps_resumed_^) {
-          raise(Failure("match branche cps already resumed: " ++ __LOC__));
+          raise(Failure("match branch cps already resumed: " ++ __LOC__));
         } else {
           _cps_resumed_ := true;
-          debugln("match branche cps resumed: " ++ __LOC__);
+          /*          debugln("match branch cps resumed: " ++ __LOC__);*/
           %e
-          mkMatchExpr([%expr _cps_result_], caseExprs);
+          Exp.match(~loc=matchLoc, [%expr _cps_result_], caseExprs);
           ();
         };
-
       if%e (matchExprBranched^ > 0) {
         matchExpr;
       } else {
@@ -219,11 +215,11 @@ let parsers = {
     } else {
       %expr
       if%e (hasResumeExprs) {
-        let%expr _cps_result_ = [%e mkMatchExpr(matchExpr, caseExprs)];
+        let%expr _cps_result_ = [%e Exp.match(~loc=matchLoc, matchExpr, caseExprs)];
         %e
         resumeExprs;
       } else {
-        let%expr _cps_result_ = [%e mkMatchExpr(matchExpr, caseExprs)];
+        let%expr _cps_result_ = [%e Exp.match(~loc=matchLoc, matchExpr, caseExprs)];
         _cps_result_;
       };
     };
@@ -317,7 +313,7 @@ let parsers = {
           raise(Failure("try cps already resumed: " ++ __LOC__));
         } else {
           _cps_resumed_ := true;
-          debugln("try cps resumed: " ++ __LOC__);
+          /*          debugln("try cps resumed: " ++ __LOC__);*/
           if%e (resumeExprsBranched^ == 0) {
             let%expr _cps_resumed_ = [%e leafExpr(resumeExprs, "r")];
             _cps_branch_resume_(_cps_result_);
@@ -330,7 +326,7 @@ let parsers = {
         if (_cps_resumed_^) {
           raise(Failure("try cps error already resumed: " ++ __LOC__));
         } else {
-          debugln("try cps error resumed: " ++ __LOC__);
+          /*          debugln("try cps error resumed: " ++ __LOC__);*/
           %e
           Exp.match(~loc=matchLoc, [%expr _cps_error_], caseExprs);
           ();
@@ -408,7 +404,7 @@ let parsers = {
           raise(Failure("Ifthenelse cps branched already resumed: " ++ __LOC__));
         } else {
           _cps_resumed_ := true;
-          debugln("Ifthenelse cps branched resumed: " ++ __LOC__);
+          /*          debugln("Ifthenelse cps branched resumed: " ++ __LOC__);*/
           if%e (resumeExprsBranched^ == 0) {
             let%expr _cps_resumed_ = [%e leafExpr(resumeExprs, "r")];
             _cps_branch_resume_(_cps_result_);
@@ -460,8 +456,8 @@ let parsers = {
     | {pexp_attributes: [({txt: "cps", loc}, payload)]} => this#parseCpsFunExpr(actualSequenceExpr, payload, loc)
     | {pexp_desc: Pexp_extension(({txt: "cps", loc}, payload))} => this#parseCpsFunExpr(getExpr(payload, loc), payload, loc)
     | {pexp_desc: Pexp_let(recFlag, bindings, inExpr)} =>
-      debugln("WARNING: *********processLetBranch actualSequenceExpr:*********");
-      this#processLetBranch(branched, recFlag, bindings, inExpr, Some(nextSequenceExpr));
+      /*      debugln("WARNING: *********processLetBranch actualSequenceExpr:*********");*/
+      this#processLetBranch(branched, recFlag, bindings, inExpr, Some(nextSequenceExpr))
     | {pexp_desc: Pexp_apply({pexp_desc: Pexp_ident({txt: Lident(id), loc})}, expressions)} when matchesCpsApply(id) =>
       let resumeExprsBranched = ref(0);
       let resumeExprs = this#descendantParser(~from=__LOC__, nextSequenceExpr, resumeExprsBranched);
@@ -509,7 +505,7 @@ let parsers = {
             this#descendantParser(~from=__LOC__, inExpr, branched),
           )
         | {pexp_desc: Pexp_apply({pexp_desc: Pexp_ident({txt: Lident(id), loc})}, expressions)} when matchesCpsApply(id) =>
-          debugln("processLetBranch pvb_pat apply cps single binding: varName = " ++ varName);
+          /*          debugln("processLetBranch pvb_pat apply cps single binding: varName = " ++ varName);*/
           let resumeExprsBranched = ref(0);
           let resumeExprs =
             mkLetIdentExpr(
@@ -522,7 +518,7 @@ let parsers = {
             );
           this#parseCpsApplyExp(~from=__LOC__, branched, id, expressions, loc, resumeExprs, resumeExprsBranched^, false);
         | {pexp_desc: Pexp_ifthenelse(ifExpr, thenExpr, elseExpr)} =>
-          debugln("processLetBranch pvb_pat ifthenelse cps single binding: varName = " ++ varName);
+          /*          debugln("processLetBranch pvb_pat ifthenelse cps single binding: varName = " ++ varName);*/
           let nextExprs = mkLetIdentExpr(recFlag, varName, varNameLoc, "_cps_result_", constraintType, inExpr);
           this#processIfthenelseBranch(branched, ifExpr, thenExpr, elseExpr, Some(nextExprs));
         | {pexp_desc: Pexp_try(tryExpr, caseExprs)} =>
@@ -536,10 +532,12 @@ let parsers = {
           let bindingExpr = this#descendantParser(~from=__LOC__, bindingExpr, bindingExprBranched);
 
           if (bindingExprBranched^ == 0) {
-            debugln("processLetBranch bindingExprBranched == 0, pvb_pat other single binding: varName = " ++ varName);
-            Exp.mk(Pexp_let(recFlag, bindings, this#descendantParser(~from=__LOC__, inExpr, branched)));
+            /*            debugln("processLetBranch bindingExprBranched == 0, pvb_pat other single binding: varName = " ++ varName);*/
+            Exp.mk(
+              Pexp_let(recFlag, bindings, this#descendantParser(~from=__LOC__, inExpr, branched)),
+            );
           } else {
-            debugln("processLetBranch bindingExprBranched > 0, pvb_pat other single binding: varName = " ++ varName);
+            /*            debugln("processLetBranch bindingExprBranched > 0, pvb_pat other single binding: varName = " ++ varName);*/
             let resumeExprsBranched = ref(0);
             let resumeExprs =
               mkLetIdentExpr(
@@ -564,7 +562,7 @@ let parsers = {
                         raise(Failure("binding cps direct already resumed: " ++ __LOC__));
                       } else {
                         _cps_resumed_ := true;
-                        debugln("binding cps direct resumed: " ++ __LOC__);
+                        /*                        debugln("binding cps direct resumed: " ++ __LOC__);*/
                         let _cps_result_ = [%e resumeExprs];
                         _cps_branch_resume_(_cps_result_);
                         ();
@@ -585,7 +583,7 @@ let parsers = {
                         raise(Failure("binding cps branched already resumed: " ++ __LOC__));
                       } else {
                         _cps_resumed_ := true;
-                        debugln("binding cps branched resumed: " ++ __LOC__);
+                        /*                        debugln("binding cps branched resumed: " ++ __LOC__);*/
                         %e
                         resumeExprs;
                         ();
@@ -607,15 +605,17 @@ let parsers = {
         | other => processBindingExpr(varName, varNameLoc, other, None)
         }
       | other =>
-        debugln("processLetBranch other single binding:");
-        skipExpr(Exp.mk(Pexp_let(recFlag, bindings, this#descendantParser(~from=__LOC__, inExpr, branched))));
+        /*        debugln("processLetBranch other single binding:");*/
+        skipExpr(Exp.mk(Pexp_let(recFlag, bindings, this#descendantParser(~from=__LOC__, inExpr, branched))))
       };
     } else {
-      debugln("processLetBranch multi bindings:");
-      skipExpr(Exp.mk(Pexp_let(recFlag, bindings, this#descendantParser(~from=__LOC__, inExpr, branched))));
+      /*      debugln("processLetBranch multi bindings:");*/
+      skipExpr(
+        Exp.mk(Pexp_let(recFlag, bindings, this#descendantParser(~from=__LOC__, inExpr, branched))),
+      );
     };
   pri parseCpsApplyExp = (~from="_", branched, id, expressions, loc, resumeExprs, resumeExprsBranched, terminator) => {
-    debugln("ppx apply cps:");
+    /*    debugln("ppx apply cps:");*/
     branched := branched^ + 1 + resumeExprsBranched;
 
     let expressions =
@@ -645,7 +645,7 @@ let parsers = {
           raise(Failure("apply cps branched already resumed: " ++ __LOC__));
         } else {
           _cps_resumed_ := true;
-          debugln("apply cps branched resumed: " ++ __LOC__);
+          /*          debugln("apply cps branched resumed: " ++ __LOC__);*/
           if%e (terminator) {
             leafExpr(resumeExprs, "t");
           } else if (resumeExprsBranched == 0) {
@@ -670,7 +670,7 @@ let parsers = {
     };
   };
   pri parseCpsDeferExpr = (~from="_", branched, deferExpr, loc, resumeExprs, resumeExprsBranched, terminator) => {
-    debugln("ppx defer cps:");
+    /*    debugln("ppx defer cps:");*/
     branched := branched^ + 1 + resumeExprsBranched;
     let deferExpr = Exp.attr(deferExpr, ({txt: "cpsdefered", loc}, emptyPstr));
 
@@ -684,7 +684,7 @@ let parsers = {
         } else {
           _cps_continuation_#onError(__LOC__);
           _cps_resumed_ := true;
-          debugln("defer cps error resumed: " ++ __LOC__);
+          /*          debugln("defer cps error resumed: " ++ __LOC__);*/
           _cps_branch_error_(_cps_error_);
           ();
         };
@@ -694,7 +694,7 @@ let parsers = {
         } else {
           _cps_continuation_#onResume(__LOC__);
           _cps_resumed_ := true;
-          debugln("defer cps resumed: " ++ __LOC__);
+          /*          debugln("defer cps resumed: " ++ __LOC__);*/
           if%e (terminator) {
             leafExpr(resumeExprs, "t");
           } else if (resumeExprsBranched == 0) {
@@ -740,7 +740,7 @@ let parsers = {
       }
     };
   pri parseCpsFunExpr = (expr, payload, loc) => {
-    debugln("ppx parseCpsFunExpr:");
+    /*    debugln("ppx parseCpsFunExpr:");*/
 
     let parseCpsFuncBodyExpr = (expr, loc) => {
       let branched = ref(0);
@@ -762,7 +762,7 @@ let parsers = {
               raise(Failure("cpsfun error already resumed: " ++ __LOC__));
             } else {
               _cps_resumed_ := true;
-              debugln("cpsfun error resumed: " ++ __LOC__);
+              /*              debugln("cpsfun error resumed: " ++ __LOC__);*/
               _cps_continuation_#error(_cps_error_);
               ();
             };
@@ -771,7 +771,7 @@ let parsers = {
               raise(Failure("cpsfun already resumed: " ++ __LOC__));
             } else {
               _cps_resumed_ := true;
-              debugln("cpsfun resumed: " ++ __LOC__);
+              /*              debugln("cpsfun resumed: " ++ __LOC__);*/
               _cps_continuation_#resume(_cps_result_);
               ();
             };
@@ -809,4 +809,8 @@ let parsers = {
 
 let cpsMapper = argv => {...default_mapper, expr: (mapper, expr) => default_mapper.expr(mapper, parsers#parseNode(expr))};
 
+let () = register("cps_ppx", cpsMapper);
+let () = register("cps_ppx", cpsMapper);
+let () = register("cps_ppx", cpsMapper);
+let () = register("cps_ppx", cpsMapper);
 let () = register("cps_ppx", cpsMapper);

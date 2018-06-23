@@ -8,4 +8,5 @@ What works fully async by now:
   function call,
   single let bindings,
   if/then/else,
+  match/cases.
   try/cases.

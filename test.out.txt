@@ -19,29 +19,13 @@ ninja: Entering directory `/mnt/internal/home/fox/development/laztic/laz-framewo
   this statement never returns (or has an unsound type.)
 
   Warning number 10
-  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 76:9-13
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 83:9-13
   
-  74 ┆   };
-  75 ┆ 
-  76 ┆ [@defer]
-  77 ┆ {
-  78 ┆   ();
-  
-  this expression should have type unit.
-
-  Warning number 10
-  (No file name)
-  
-  this expression should have type unit.
-
-  Warning number 10
-  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 65:13-17
-  
-  63 ┆   println("catch branch 1");
-  64 ┆   firstCps(", 55");
-  65 ┆   "cc1";
-  66 ┆   raise(LocalException);
-  67 ┆ | error => raise(error)
+  81 ┆   };
+  82 ┆ 
+  83 ┆ [@defer]
+  84 ┆ {
+  85 ┆   ();
   
   this expression should have type unit.
 
@@ -51,6 +35,22 @@ ninja: Entering directory `/mnt/internal/home/fox/development/laztic/laz-framewo
   this expression should have type unit.
 
   Warning number 10
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 72:13-17
+  
+  70 ┆   println("catch branch 1");
+  71 ┆   firstCps(", 55");
+  72 ┆   "cc1";
+  73 ┆   raise(LocalException);
+  74 ┆ | error => raise(error)
+  
+  this expression should have type unit.
+
+  Warning number 10
+  (No file name)
+  
+  this expression should have type unit.
+
+  Warning number 10
   (No file name)
   
   this expression should have type unit.
@@ -61,13 +61,13 @@ ninja: Entering directory `/mnt/internal/home/fox/development/laztic/laz-framewo
   this expression should have type unit.
 
   Warning number 10
-  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 48:11-15
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 55:11-15
   
-  46 ┆   println("catch branch 1");
-  47 ┆   firstCps(", 55");
-  48 ┆   "cc1";
-  49 ┆   raise(LocalException);
-  50 ┆ | error => raise(error)
+  53 ┆   println("switch result is: " ++ v);
+  54 ┆   firstCps(", 55");
+  55 ┆   "cc1";
+  56 ┆   raise(LocalException);
+  57 ┆ | error => raise(error)
   
   this expression should have type unit.
 
@@ -113,48 +113,48 @@ ninja: Entering directory `/mnt/internal/home/fox/development/laztic/laz-framewo
   35 ┆ [@cps]
   36 ┆ (
   37 ┆   x => {
-  38 ┆     switch (firstCps("xx1xx2")) {
-  39 ┆     | "xx1xx2" as pattern => println("switch: pattern 1 matched: " ++ 
-       pattern)
+  38 ┆     try (
+  39 ┆       try (firstErrorCps(", 1")) {
   
   unused variable x.
 
   Warning number 27
-  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 96:21-23
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 103:21-23
   
-  94 ┆ {
-  95 ┆   pub self = this;
-  96 ┆   pub onDefer = loc => {
-  97 ┆     ();
-  98 ┆     /* println("continuation onDefer: " ++ loc); */
-  
-  unused variable loc.
-
-  Warning number 27
-  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 101:22-24
-  
-   99 ┆   ();
-  100 ┆ };
-  101 ┆ pub onResume = loc => {
-  102 ┆   ();
-  103 ┆   /* println("continuation onResume: " ++ loc); */
+  101 ┆ {
+  102 ┆   pub self = this;
+  103 ┆   pub onDefer = loc => {
+  104 ┆     ();
+  105 ┆     /* println("continuation onDefer: " ++ loc); */
   
   unused variable loc.
 
   Warning number 27
-  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 106:21-23
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 108:22-24
   
-  104 ┆   ();
-  105 ┆ };
-  106 ┆ pub onError = loc => {
-  107 ┆   ();
-  108 ┆   /* println("continuation onError: " ++ loc); */
+  106 ┆   ();
+  107 ┆ };
+  108 ┆ pub onResume = loc => {
+  109 ┆   ();
+  110 ┆   /* println("continuation onResume: " ++ loc); */
+  
+  unused variable loc.
+
+  Warning number 27
+  /mnt/internal/home/fox/development/laztic/laz-framework/server/coroutine_ppx/tests/src/native/IndexNative.re 113:21-23
+  
+  111 ┆   ();
+  112 ┆ };
+  113 ┆ pub onError = loc => {
+  114 ┆   ();
+  115 ┆   /* println("continuation onError: " ++ loc); */
   
   unused variable loc.
 [3/3] [34mBuilding[39m [2mindexnative.native[22m
+catch branch 1
 defer branch 1
 switch: pattern 1 matched: xx1xx2
-catch branch 1
+switch result is: xx1xx2
 defer branch 1
 catch branch 2
 catch branch 1
