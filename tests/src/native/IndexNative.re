@@ -115,7 +115,7 @@ let otherCps =
         ) {
         | LocalException =>
           println("catch branch 2");
-          "cc1";
+          "cc222" ++ ifres;
         | error => raise(error)
         };
 
@@ -127,7 +127,7 @@ let otherCps =
         /* continuation#error(Not_found); */
       };
 
-      "---";
+      res;
     }
   );
 
