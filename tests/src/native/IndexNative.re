@@ -102,6 +102,13 @@ let otherCps =
           other;
         };
 
+      let x =
+        [@defer]
+        {
+          println("defer branch 2 : res=" ++ ifres);
+          continuation#resume(ifres);
+        };
+
       let res =
         try (
           try (firstErrorCps(", 1")) {
@@ -119,15 +126,28 @@ let otherCps =
         | error => raise(error)
         };
 
-      [@defer]
-      {
-        ();
-        println("defer branch 2 : res=" ++ res);
-        continuation#resume(res);
-        /* continuation#error(Not_found); */
-      };
+      let x =
+        [@defer]
+        {
+          ();
+          println("defer branch 2 : res=" ++ res);
+          continuation#resume(res);
+          /* continuation#error(Not_found); */
+        };
 
-      res;
+      let cp1 =
+        [@o]
+        {
+          let a = firstCps(x ++ ", 1");
+
+          [@o]
+          {
+            let a = firstCps(a ++ ", 2");
+            a;
+          };
+        };
+
+      cp1;
     }
   );
 
