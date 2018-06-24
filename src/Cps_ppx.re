@@ -675,7 +675,6 @@ let parsers = {
         } else {
           _cps_resumed_ := true;
           /*          debugln("apply cps branched resumed: " ++ __LOC__);*/
-
           if%e (terminator) {
             try%expr ([%e leafExpr(resumeExprs, "t")]) {
             | error => _cps_branch_error_(error)
@@ -696,7 +695,6 @@ let parsers = {
               _cps_resumed_^ ? `Continued : `Suspended;
             };
           };
-
           ();
         };
       let _cps_continuation_ = {
