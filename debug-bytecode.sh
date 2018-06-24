@@ -9,4 +9,6 @@ fi
 
 cd tests
 echo "" > src/bytecode/IndexBytecodeCpsed.re
-bsb -color -make-world -clean-world -backend bytecode && ../red/red.py lib/bs/bytecode/indexbytecode.byte
+bsb -color -make-world -clean-world -backend bytecode
+cd lib/bs/bytecode/
+../../../../red/red.py indexbytecode.byte
