@@ -5,6 +5,7 @@
 /tests/lib
 /lib
 /ppx
+/red
 jbuild.flags
 .merlin
 *.exe

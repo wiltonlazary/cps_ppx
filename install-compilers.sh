@@ -4,6 +4,8 @@ unset GIT_WORK_TREE
 unset GIT_DIR
 base=$(pwd)
 
+git clone https://github.com/frantic/red.git
+
 ocamlVersion="4.02.3+buckle-master"
 nodeVersion="10.4.1"
 
