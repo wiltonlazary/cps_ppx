@@ -11,9 +11,8 @@ let firstErrorCps =
       [@defer]
       {
         ();
-        println("defer branch 1");
+        println("defer firstErrorCps");
         continuation#error(LocalException);
-        /* raise(LocalException); */
       }
   );
 
@@ -24,9 +23,8 @@ let firstCps =
       [@defer]
       {
         ();
-        println("defer branch 2");
+        println("defer firstCps");
         continuation#resume(x ++ "-004");
-        /* continuation#error(Exception); */
       }
   );
 
@@ -37,8 +35,8 @@ let boolCps =
       [@defer]
       {
         ();
-        println("defer branch 10");
-        continuation#resume(x)
+        println("defer boolCps");
+        continuation#resume(x);
       }
   );
 

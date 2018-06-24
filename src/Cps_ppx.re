@@ -675,14 +675,28 @@ let parsers = {
         } else {
           _cps_resumed_ := true;
           /*          debugln("apply cps branched resumed: " ++ __LOC__);*/
+
           if%e (terminator) {
-            leafExpr(resumeExprs, "t");
+            try%expr ([%e leafExpr(resumeExprs, "t")]) {
+            | error => _cps_branch_error_(error)
+            };
           } else if (resumeExprsBranched == 0) {
-            let%expr _cps_result_ = [%e leafExpr(resumeExprs, "r")];
-            _cps_branch_resume_(_cps_result_);
+            try%expr (
+              {
+                let _cps_result_ = [%e leafExpr(resumeExprs, "r")];
+                _cps_branch_resume_(_cps_result_);
+              }
+            ) {
+            | error => _cps_branch_error_(error)
+            };
           } else {
-            continuationExpr(resumeExprs);
+            try%expr ([%e continuationExpr(resumeExprs)]) {
+            | error =>
+              _cps_branch_error_(error);
+              _cps_resumed_^ ? `Continued : `Suspended;
+            };
           };
+
           ();
         };
       let _cps_continuation_ = {
@@ -694,8 +708,11 @@ let parsers = {
         pub onResume = _cps_continuation_#onResume;
         pub onError = _cps_continuation_#onError
       };
-      %e
-      applyExpr;
+      try ([%e applyExpr]) {
+      | error =>
+        _cps_branch_error_(error);
+        _cps_resumed_^ ? `Continued : `Suspended;
+      };
     };
   };
   pri parseCpsDeferExpr = (~from="_", branched, deferExpr, loc, resumeExprs, resumeExprsBranched, terminator) => {
@@ -714,14 +731,28 @@ let parsers = {
           _cps_continuation_#onResume(__LOC__);
           _cps_resumed_ := true;
           /*          debugln("defer cps resumed: " ++ __LOC__);*/
+
           if%e (terminator) {
-            leafExpr(resumeExprs, "t");
+            try%expr ([%e leafExpr(resumeExprs, "t")]) {
+            | error => _cps_branch_error_(error)
+            };
           } else if (resumeExprsBranched == 0) {
-            let%expr _cps_result_ = [%e leafExpr(resumeExprs, "r")];
-            _cps_branch_resume_(_cps_result_);
+            try%expr (
+              {
+                let _cps_result_ = [%e leafExpr(resumeExprs, "r")];
+                _cps_branch_resume_(_cps_result_);
+              }
+            ) {
+            | error => _cps_branch_error_(error)
+            };
           } else {
-            continuationExpr(resumeExprs);
+            try%expr ([%e continuationExpr(resumeExprs)]) {
+            | error =>
+              _cps_branch_error_(error);
+              _cps_resumed_^ ? `Continued : `Suspended;
+            };
           };
+
           ();
         };
       let continuation = {
@@ -731,9 +762,17 @@ let parsers = {
         pub error = _cps_branch_error_
       };
       _cps_continuation_#onDefer(__LOC__);
-      %e
-      deferExpr;
-      _cps_resumed_^ ? `Continued : `Suspended;
+      try (
+        {
+          %e
+          deferExpr;
+          _cps_resumed_^ ? `Continued : `Suspended;
+        }
+      ) {
+      | error =>
+        _cps_branch_error_(error);
+        _cps_resumed_^ ? `Continued : `Suspended;
+      };
     };
   };
   pri descendantParser = (~from="_", expr, branched) =>
