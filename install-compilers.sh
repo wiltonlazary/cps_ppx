@@ -37,3 +37,4 @@ npm install -g json
 npm install -g create-react-native-app
 npm install -g reason-cli
 npm link bs-platform
+bash
