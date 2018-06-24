@@ -165,11 +165,11 @@ let res =
       pub error = value => {
         ();
         switch (value) {
-        | _ => println("Error catched!")
+        | _ => println("//////////Error catched!")
         };
         ();
       }
     },
   );
 
-println("::cps finished::");
+println("::async finished::");

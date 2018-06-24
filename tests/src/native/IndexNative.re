@@ -130,9 +130,9 @@ let otherCps =
         [@defer]
         {
           ();
-          println("defer branch 2 : res=" ++ res);
-          continuation#resume(res);
-          /* continuation#error(Not_found); */
+          println("***********defer branch xxx : res=" ++ res);
+          /* continuation#resume(res); */
+          continuation#error(Not_found);
         };
 
       let cp1 =
@@ -182,11 +182,11 @@ let res =
       pub error = value => {
         ();
         switch (value) {
-        | _ => println("Error catched!")
+        | _ => println("//////////Error catched!")
         };
         ();
       }
     },
   );
 
-println("::cps finished::");
+println("::async finished::");

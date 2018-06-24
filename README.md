@@ -14,6 +14,8 @@ What works fully async by now:
 ------>    try/cases
 
 What will come fully async on short:
+------>    context api
+------>    channels
 ------>    for/while loops
 ------>    instance methods on cps apply detection
 ------>    ...
