@@ -5,7 +5,7 @@ unset GIT_DIR
 base=$(pwd)
 
 ocamlVersion="4.02.3+buckle-master"
-nodeVersion="10.4.1"
+nodeVersion="10.5.0"
 
 opam init --y
 opam switch create $ocamlVersion --y &> /dev/null
@@ -20,7 +20,7 @@ unset NVM_DIR
 wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-nvm install node $nodeVersion
+nvm install node v$nodeVersion
 nvm use --delete-prefix v$nodeVersion
 
 mkdir -p ~/build &> /dev/null
