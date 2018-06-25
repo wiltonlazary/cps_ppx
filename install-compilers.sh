@@ -32,6 +32,7 @@ git pull
 make && make install
 cd $base
 
+npm install -g yarn
 npm install -g bs-platform@file:$build/bsb-native
 npm install -g json
 npm install -g create-react-native-app
