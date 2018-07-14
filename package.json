@@ -12,9 +12,7 @@
     "scripts": {
         "postinstall": "node copyPlatformBinaryInPlace.js"
     },
-    "devDependencies": {
-        "bs-platform": "^3.1.5"
-    },
+    "devDependencies": {},
     "dependencies": {
         "request": "^2.82.0",
         "yargs": "^11.0.0"

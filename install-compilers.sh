@@ -5,12 +5,12 @@ unset GIT_DIR
 base=$(pwd)
 
 ocamlVersion="4.02.3+buckle-master"
-nodeVersion="10.5.0"
+nodeVersion="10.6.0"
 
 opam init --y
 opam switch create $ocamlVersion --y &> /dev/null
 opam switch $ocamlVersion --y
-eval $(opam env)
+eval $(opam config env)
 opam install ppx_tools --y
 opam install ppx_tools_versioned --y
 opam install ocaml-migrate-parsetree --y
@@ -35,7 +35,6 @@ cd $base
 npm install -g yarn
 npm install -g bs-platform@file:$build/bsb-native
 npm install -g json
-npm install -g create-react-native-app
 npm install -g reason-cli
-npm link bs-platform
+npm link bs-platform --save-dev
 bash

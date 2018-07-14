@@ -7,13 +7,16 @@
         "dir": "src",
         "subdirs": [{
             "dir": "native",
-            "backend": "native"
+            "backend": "native",
+            "subdirs": true
         }, {
             "dir": "js",
-            "backend": "js"
+            "backend": "js",
+            "subdirs": true
         }, {
             "dir": "bytecode",
-            "backend": "bytecode"
+            "backend": "bytecode",
+            "subdirs": true
         }]
     }],
     "entries": [{
