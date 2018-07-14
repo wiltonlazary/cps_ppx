@@ -33,8 +33,8 @@ make && make install
 cd $base
 
 npm install -g yarn
-npm install -g bs-platform@file:$build/bsb-native
+npm install -g bs-platform
 npm install -g json
 npm install -g reason-cli
-npm link bs-platform --save-dev
+npm install -D bs-platform@file:$build/bsb-native
 bash

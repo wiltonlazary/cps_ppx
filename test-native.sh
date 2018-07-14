@@ -1,4 +1,5 @@
 #!/bin/bash
+source .env.sh
 #echo "" > tests/src/native/IndexNativeCpsed.re
 #make test &> test.out.txt ; cat test.out.txt
 cd tests

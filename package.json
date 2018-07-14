@@ -12,7 +12,9 @@
     "scripts": {
         "postinstall": "node copyPlatformBinaryInPlace.js"
     },
-    "devDependencies": {},
+    "devDependencies": {
+        "bs-platform": "file:../../../../../../../../../../home/fox/build/bsb-native"
+    },
     "dependencies": {
         "request": "^2.82.0",
         "yargs": "^11.0.0"

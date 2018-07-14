@@ -1,4 +1,5 @@
 #!/bin/bash
+source .env.sh
 
 if [ ! -d "red" ]
 then
