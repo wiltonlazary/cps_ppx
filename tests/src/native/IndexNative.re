@@ -229,8 +229,10 @@ module Any = {
   };
 };
 
+type anyModType = (module ClassModuleInheritType);
 let anyMod: (module ClassModuleInheritType) = (module Any);
 module AnyModNew = (val anyMod);
+let classId = AnyModNew.classId;
 
 module ClassModule = (Def: ClassModuleDefType, Inherit: ClassModuleInheritType) => {
   let classId = __LOC__;
