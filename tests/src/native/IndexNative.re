@@ -204,27 +204,26 @@ type options = {
   [@bs.optional]
   accept: string,
 };
-
+ 
 let xx = options(~op="", ());
 
 external cast : 'a => 'b = "%identity";
 
-type entityKind = [ | `Entity];
-
 class entity (v) = {
-  pub tp : entityKind  = `Entity;
+  pub tp = "Entity(this)";
   pub kind = "entity";
 };
 
 class person = {
-  as _;
   inherit (class entity)("test") as super;
+  pub! tp = super#tp;
   pub! kind = "person";
   pub name = "wilton";
 };
 
 class employer = {
   inherit class person as super;
+  pub! tp = super#tp;
   pub! kind = "employer";
   pub acount = 10;
 };
@@ -240,9 +239,9 @@ let () = {
 
   let x: entity = (new employer :> entity);
 
-  switch (x#kind) {
-  | "employer" => print_endline("employer:" ++ string_of_int((cast(x): employer)#acount))
-  | "person" => print_endline("person:" ++ (cast(x): person)#name)
+  switch (x#tp) {
+  | "Entity(_)" => print_endline("employer:" ++ string_of_int((cast(x): employer)#acount))
+  | "Entity(_)" => print_endline("person:" ++ (cast(x): person)#name)
   | _ => print_endline("other:" ++ (cast(x): entity)#kind)
   };
 
