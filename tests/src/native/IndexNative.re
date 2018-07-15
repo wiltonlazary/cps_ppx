@@ -217,10 +217,10 @@ module Any = {
     as (this: 'this);
     pub inheritance = inheritanceTable;
     pub className = className;
-    pub instanceof = targetClassName =>
+    pub instanceof = targetClassId =>
       try (
         {
-          this#inheritance |. Hashtbl.find(targetClassName) |. ignore;
+          this#inheritance |. Hashtbl.find(targetClassId) |. ignore;
           true;
         }
       ) {
@@ -228,6 +228,9 @@ module Any = {
       };
   };
 };
+
+let anyMod: (module ClassModuleInheritType) = (module Any);
+module AnyModNew = (val anyMod);
 
 module ClassModule = (Def: ClassModuleDefType, Inherit: ClassModuleInheritType) => {
   let classId = __LOC__;
