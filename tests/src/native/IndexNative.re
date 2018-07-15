@@ -190,3 +190,20 @@ let res =
   );
 
 println("::async finished::");
+
+[@bs.deriving abstract]
+type options = {
+  [@bs.optional]
+  language: string,
+  [@bs.optional]
+  session: bool,
+  [@bs.optional]
+  op: string,
+  [@bs.optional]
+  processor: string,
+  [@bs.optional]
+  accept: string,
+};
+
+let xx = options(~op="", ());
+ 

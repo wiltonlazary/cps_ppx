@@ -182,3 +182,5 @@ let res =
   );
 
 println("::async finished::");
+
+let jsonTest = {"name":"wilton"};

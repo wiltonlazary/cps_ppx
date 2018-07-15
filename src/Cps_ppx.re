@@ -698,7 +698,7 @@ let parsers = {
           ();
         };
       let _cps_continuation_ = {
-        pub self = this;
+        as _;
         pub resumed = () => _cps_resumed_^;
         pub resume = _cps_branch_resume_;
         pub error = _cps_branch_error_;
@@ -753,12 +753,7 @@ let parsers = {
 
           ();
         };
-      let continuation = {
-        pub self = this;
-        pub resumed = () => _cps_resumed_^;
-        pub resume = _cps_branch_resume_;
-        pub error = _cps_branch_error_
-      };
+      let continuation = {as _; pub resumed = () => _cps_resumed_^; pub resume = _cps_branch_resume_; pub error = _cps_branch_error_};
       _cps_continuation_#onDefer(__LOC__);
       try (
         {
