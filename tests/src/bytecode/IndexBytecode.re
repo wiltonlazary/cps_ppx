@@ -173,3 +173,62 @@ let res =
   );
 
 println("::async finished::");
+
+[@bs.deriving abstract]
+type options = {
+  [@bs.optional]
+  language: string,
+  [@bs.optional]
+  session: bool,
+  [@bs.optional]
+  op: string,
+  [@bs.optional]
+  processor: string,
+  [@bs.optional]
+  accept: string,
+};
+
+let xx = options(~op="", ());
+
+external cast : 'a => 'b = "%identity";
+
+type entityKind = [ | `Entity];
+let entityKindValue = `Entity;
+
+class entity (v: entityKind) = {
+  pub tp = v;
+  pub kind = "entity";
+};
+
+class person = {
+  as _;
+  inherit (class entity)(`Entity) as super;
+  pub! kind = "person";
+  pub name = "wilton";
+};
+
+class employer = {
+  inherit class person as super;
+  pub! kind = "employer";
+  pub acount = 10;
+};
+
+external toEmployer : 'a => employer = "%identity";
+
+let painIndexMap: Hashtbl.t(string, person) = Hashtbl.create(10);
+
+let () = {
+  open Hashtbl;
+  add(painIndexMap, "western paper wasp", new person);
+  add(painIndexMap, "sss", (new employer :> person));
+
+  let x: entity = (new employer :> entity);
+
+  switch (x#kind) {
+  | "employer" => print_endline("employer:" ++ string_of_int((cast(x): employer)#acount))
+  | "person" => print_endline("person:" ++ (cast(x): person)#name)
+  | _ => print_endline("other:" ++ (cast(x): entity)#kind)
+  };
+
+  ();
+};
