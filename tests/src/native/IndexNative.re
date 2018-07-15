@@ -191,23 +191,59 @@ let res =
 
 println("::async finished::");
 
-[@bs.deriving abstract]
-type options = {
-  [@bs.optional]
-  language: string,
-  [@bs.optional]
-  session: bool,
-  [@bs.optional]
-  op: string,
-  [@bs.optional]
-  processor: string,
-  [@bs.optional]
-  accept: string,
+class type anyClassType = {
+  pub inheritance: Hashtbl.t(string, string);
+  pub className: string;
+  pub instanceof: string => bool
 };
 
-let xx = options(~op="", ());
+module type ClassModuleType = {type t = anyClassType;};
+
+module type ClassModuleInheritType = {type t = anyClassType; let inheritanceTable: Hashtbl.t(string, string);};
 
 external cast : 'a => 'b = "%identity";
+
+type txx = anyClassType;
+
+module Any: ClassModuleInheritType = {
+  let className = __MODULE__;
+  let inheritanceTable: Hashtbl.t(string, string) = Hashtbl.create(0);
+  inheritanceTable |. Hashtbl.add(className, __LOC__);
+
+  class t: anyClassType = {
+    as (this: 'this);
+    pub inheritance = inheritanceTable;
+    pub className = className;
+    pub instanceof = targetClassName =>
+      try (
+        {
+          this#inheritance |. Hashtbl.find(targetClassName) |. ignore;
+          true;
+        }
+      ) {
+      | _ => false
+      };
+  };
+};
+
+module ClassModule = (Template: ClassModuleType, InheritTemplate: ClassModuleInheritType) => {
+  let className = __MODULE__;
+  let inheritanceTable = Hashtbl.copy(InheritTemplate.inheritanceTable);
+  inheritanceTable |. Hashtbl.add(className, __LOC__);
+
+  class t = {
+    inherit class InheritTemplate.t as super;
+    inherit class Template.t as this;
+  };
+};
+
+module Test =
+  ClassModule(
+    {
+      class t = {};
+    },
+    Any,
+  );
 
 let entityClassName = "entity";
 let entityInheritanceTable: Hashtbl.t(string, string) = Hashtbl.create(0);
