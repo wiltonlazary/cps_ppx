@@ -204,31 +204,53 @@ type options = {
   [@bs.optional]
   accept: string,
 };
- 
+
 let xx = options(~op="", ());
 
 external cast : 'a => 'b = "%identity";
 
+let entityClassName = "entity";
+let entityInheritanceTable: Hashtbl.t(string, string) = Hashtbl.create(0);
+entityInheritanceTable |. Hashtbl.add(entityClassName, __LOC__);
+
 class entity (v) = {
-  pub tp = "Entity(this)";
+  as (this: 'this);
+  pub inheritance = entityInheritanceTable;
+  pub instanceof = className =>
+    try (
+      {
+        this#inheritance |. Hashtbl.find(className);
+        true;
+      }
+    ) {
+    | _ => false
+    };
   pub kind = "entity";
 };
 
+let personClassName = "person";
+let personInheritanceTable = Hashtbl.copy(entityInheritanceTable);
+personInheritanceTable |. Hashtbl.add(personClassName, __LOC__);
+
 class person = {
+  as (this: 'this);
   inherit (class entity)("test") as super;
-  pub! tp = super#tp;
+  pub! inheritance = personInheritanceTable;
   pub! kind = "person";
   pub name = "wilton";
 };
 
+let employerClassName = "employer";
+let employerInheritanceTable = Hashtbl.copy(personInheritanceTable);
+employerInheritanceTable |. Hashtbl.add(employerClassName, __LOC__);
+
 class employer = {
+  as (this: 'this);
   inherit class person as super;
-  pub! tp = super#tp;
+  pub! inheritance = employerInheritanceTable;
   pub! kind = "employer";
   pub acount = 10;
 };
-
-external toEmployer : 'a => employer = "%identity";
 
 let painIndexMap: Hashtbl.t(string, person) = Hashtbl.create(10);
 
@@ -237,11 +259,11 @@ let () = {
   add(painIndexMap, "western paper wasp", new person);
   add(painIndexMap, "sss", (new employer :> person));
 
-  let x: entity = (new employer :> entity);
+  let x: entity = (new person :> entity);
 
-  switch (x#tp) {
-  | "Entity(_)" => print_endline("employer:" ++ string_of_int((cast(x): employer)#acount))
-  | "Entity(_)" => print_endline("person:" ++ (cast(x): person)#name)
+  switch (x) {
+  | x when x#instanceof(employerClassName) => print_endline("employer:" ++ string_of_int((cast(x): employer)#acount))
+  | x when x#instanceof(personClassName) => print_endline("person:" ++ (cast(x): person)#name)
   | _ => print_endline("other:" ++ (cast(x): entity)#kind)
   };
 
