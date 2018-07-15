@@ -197,23 +197,16 @@ class type anyClassType = {
   pub instanceof: string => bool
 };
 
-module type ClassModuleType = {
-  class   t : {};
-};
+module type ClassModuleType = {type t;};
 
 module type ClassModuleInheritType = {
-  class   t : {
-    pub className: string;
-    pub inheritance: Hashtbl.t(string, string);
-    pub instanceof: string => bool
-  };
-
+  type  t  ;
   let inheritanceTable: Hashtbl.t(string, string);
 };
 
 external cast : 'a => 'b = "%identity";
 
-module Any: ClassModuleInheritType = {
+module Any = {
   let className = __MODULE__;
   let inheritanceTable: Hashtbl.t(string, string) = Hashtbl.create(0);
   inheritanceTable |. Hashtbl.add(className, __LOC__);
@@ -234,25 +227,27 @@ module Any: ClassModuleInheritType = {
   };
 };
 
-module ClassModule = (Template: ClassModuleType, InheritTemplate: ClassModuleInheritType) => {
+module ClassModule = (InheritTemplate: ClassModuleInheritType, Template: ClassModuleType) => {
   let className = __MODULE__;
   let inheritanceTable = Hashtbl.copy(InheritTemplate.inheritanceTable);
   inheritanceTable |. Hashtbl.add(className, __LOC__);
+  external cast : 'a => 'b = "%identity";
+  
+  include Template;
 
-  class t = {
-    inherit class InheritTemplate.t as super;
-    inherit class Template.t as this;
+  class tx = {
+    inherit class Any.t as super;
   };
 };
 
 module Test =
   ClassModule(
+    Any,
     {
       class t = {
         pub selfMethod = "xxxx";
       };
     },
-    Any,
   );
 
 let entityClassName = "entity";
