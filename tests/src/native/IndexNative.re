@@ -191,6 +191,16 @@ let res =
 
 println("::async finished::");
 
+external cast : 'a => 'b = "%identity";
+
+module type GenericModuleType = {type t;};
+
+let createModule = (type a) : (module GenericModuleType with type t = a) =>
+  (module
+   {
+     type t = a;
+   });
+
 class type anyClassType = {
   pub inheritance: Hashtbl.t(string, string);
   pub className: string;
@@ -198,8 +208,6 @@ class type anyClassType = {
 };
 
 type anyObj('a) = {.. selfMethod: string} as 'a;
-
-module type GenericModuleType = {};
 
 module type ClassModuleDefType = {type t;};
 
@@ -213,7 +221,7 @@ module Any = {
   let inheritanceTable: Hashtbl.t(string, string) = Hashtbl.create(0);
   inheritanceTable |. Hashtbl.add(classId, className);
 
-  class t = {
+  class tx = {
     as (this: 'this);
     pub inheritance = inheritanceTable;
     pub className = className;
@@ -227,6 +235,9 @@ module Any = {
       | _ => false
       };
   };
+
+  let xx = {pub name = "wilton"};
+  let zz = Obj.magic(xx);
 };
 
 type anyModType = (module ClassModuleInheritType);
@@ -239,8 +250,13 @@ module ClassModule = (Def: ClassModuleDefType, Inherit: ClassModuleInheritType) 
   let className = __MODULE__;
   let inheritanceTable = Hashtbl.copy(Inherit.inheritanceTable);
   inheritanceTable |. Hashtbl.add(classId, className);
-  external cast : 'a => 'b = "%identity";
-  include Def;
+
+  type t;
+  let this = t => t;
+
+  module Impl = {
+    let getThis = this;
+  };
 
   class tx = {};
 };
@@ -256,6 +272,8 @@ module Test =
     },
     Any,
   );
+
+class x =  Any.tx;
 
 let entityClassName = "entity";
 let entityInheritanceTable: Hashtbl.t(string, string) = Hashtbl.create(0);
